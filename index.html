@@ -28,27 +28,28 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             background-color: #fff9f0;
+            color: #5d4037; /* こげ茶色 */
         }
 
-        /* 薄いパステルピンク一色の手書き風水玉背景 */
+        /* 背景：手書き風の大きめの水玉ポップ（パステルピンク一色） */
         .bg-polka-pop {
-            background-color: #fffaf0; /* ベース：クリーム色 */
+            background-color: #fffaf0;
             background-image: 
-                radial-gradient(circle, #ffe0e9 22%, transparent 23%),
-                radial-gradient(circle, #ffe0e9 22%, transparent 23%);
+                radial-gradient(circle, #ffe0e9 25%, transparent 26%),
+                radial-gradient(circle, #ffe0e9 25%, transparent 26%);
             background-position: 0 0, 50px 50px;
             background-size: 100px 100px;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(8px);
             border-radius: 24px;
             border: 3px solid #fff;
             box-shadow: 0 8px 32px rgba(255, 182, 193, 0.25);
         }
 
-        /* アニメーション定義 */
+        /* アニメーション */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -78,8 +79,6 @@
         }
 
         .btn-bounce:active { transform: scale(0.96); transition: transform 0.1s; }
-        .text-pastel-pink { color: #ff8fa3; }
-        .text-deep-brown { color: #5d4037; }
         
         /* テキストの改行設定 */
         .whitespace-pre-wrap { white-space: pre-wrap; }
@@ -92,66 +91,81 @@
         const { useState, useEffect, useMemo } = React;
 
         // --- データ定義 ---
+        // darkColor: 視認性を高めた濃いめのパステルカラー
         const CHARACTERS = {
             lillilu: {
                 id: 'lillilu', nameEn: 'LilLilu', nameJp: 'リルリル', 
                 color: '#FFB3B3', darkColor: '#FF6B6B', // 赤系
-                title: '🤡 雨上がりの太陽タイプ', hiddenCharm: '無邪気な愛され力',
+                title: '🤡 雨上がりの太陽タイプ', 
+                hiddenCharm: '無邪気な愛され力',
                 desc: 'あなたはそこにいるだけで、\n周りを明るくする太陽のような存在！\nちょっとしたユーモアで、みんなの心を\nフワッと軽くしているよ。',
                 advice: 'まわりの人がホッコリとするような\n雰囲気をもっているあなた。\n優しい子心で自分の気持ちよりも、\nつい相手の気持ちを優先しがち。\nすこし疲れた日は、誰かのためだけじゃなくて、\n自分のためにも『やさしくしてあげる時間』\nをつくってあげてね。',
-                traits: '愛嬌／親しみやすい／朗らか', img: 'lillilu.png'
+                traits: '愛嬌／親しみやすい／朗らか', 
+                img: 'lillilu.png'
             },
             rosie: {
                 id: 'rosie', nameEn: 'Rosie', nameJp: 'ロージー', 
                 color: '#FFCCE0', darkColor: '#FF85A2', // ピンク系
-                title: '🐰 春のそよ風タイプ', hiddenCharm: '天真爛漫なハッピーオーラ',
+                title: '🐰 春のそよ風タイプ', 
+                hiddenCharm: '天真爛漫なハッピーオーラ',
                 desc: '喜びをシェアする天才！\n素敵なものを見つけたら一番に誰かに伝えるその純粋さが、みんなの日常をカラフルに\nしているよ。',
                 advice: '季節の変化や、身近な“ときめき”を見つけるのが上手なあなた。相手の好きなものを見つけて、\nシェアしてあげるのも上手。\n相手におすそわけするだけじゃなくって、\n時には自分のうれしかったこと、\nちょっぴりさみしかったこと、\n信頼できる人にシェアしてみてね。',
-                traits: '感性豊か／天真爛漫／天然', img: 'rosie.png'
+                traits: '感性豊か／天真爛漫／天然', 
+                img: 'rosie.png'
             },
             finn: {
                 id: 'finn', nameEn: 'Finn', nameJp: 'フィン', 
                 color: '#B3E6B3', darkColor: '#6BCB77', // 緑系
-                title: '🐸 夏の波しぶきタイプ', hiddenCharm: 'はじける開放感',
+                title: '🐸 夏の波しぶきタイプ', 
+                hiddenCharm: 'はじける開放感',
                 desc: 'あなたは心の壁を取り払う天才！\n「ようこそ！」というあなたの明るい一言が、みんなの心のドアを開けているよ。',
                 advice: '本当はちょっぴりドキドキしやすいけど、\nいざというときは笑顔で場をつなげる\nフィン気質のあなた。\nうまく話そうとしなくても、無理しなくても\n大丈夫。「きいてみたい」と思ったことを\n素直にきいてみるだけで、十分にステキな\nコミュニケーションになっているよ。',
-                traits: 'ムードメーカー／好奇心／冒険家', img: 'finn.png'
+                traits: 'ムードメーカー／好奇心／冒険家', 
+                img: 'finn.png'
             },
             bonbon: {
                 id: 'bonbon', nameEn: 'Bonbon', nameJp: 'ボンボン', 
                 color: '#FFD9B3', darkColor: '#FF9F43', // オレンジ系
-                title: '🐻 秋の夕焼けタイプ', hiddenCharm: 'ひたむきさと前向きさ', hiddenCharmAlt: 'ひたむきさと前向きさ',
+                title: '🐻 秋の夕焼けタイプ', 
+                hiddenCharm: 'ひたむきな信頼感', hiddenCharmAlt: 'ひたむきさと前向きさ',
                 desc: 'あなたは言葉より行動で示す人。\nコツコツ頑張るその背中に、みんなは\n『自分も頑張ろう！』と勇気を\nもらっているよ。',
                 advice: '自分のペースで、目の前のことに一生懸命になれるタイプのあなた。結果よりもプロセスを大事にできるのはとっても良いところ。\nだけど、時に頑張りすぎて、『寝てない！』\nってことあるんじゃない？\nときどき立ち止まって、\n『ここまで来た自分、よくやってる！』って、\n自分にご褒美をあげてね。',
-                traits: '努力家／誠実／マイペース', img: 'bonbon.png'
+                traits: '努力家／誠実／マイペース', 
+                img: 'bonbon.png'
             },
             espie: {
                 id: 'espie', nameEn: 'Espie', nameJp: 'エスピー', 
                 color: '#B3D9FF', darkColor: '#4D96FF', // 青系
-                title: '🐘 冬の毛布タイプ', hiddenCharm: '深くて温かい包容力',
+                title: '🐘 冬の毛布タイプ', 
+                hiddenCharm: '深くて温かい包容力',
                 desc: '言葉にならない声を聞くやさしさの持ち主。\nアドバイスより、ただ静かに寄り添ってくれるその温もりに、多くの人が\n救われているよ。',
                 advice: 'あなたは、困っている人や不安そうな人を\n見つけると、そっと寄り添いたくなる\nエスピー気質。\n支える側に回ることが多いからこそ、\n自分の不安や疲れを後回しにしてしまう一面も。\n休みの日は、毛布をかぶって、\nゆっくり休んでね。',
-                traits: '包容力／共感力／あったかい', img: 'espie.png'
+                traits: '包容力／共感力／あったかい', 
+                img: 'espie.png'
             },
             gigi: {
                 id: 'gigi', nameEn: 'Gigi', nameJp: 'ジジ', 
-                color: '#FFF9B3', darkColor: '#E1B12C', // 黄色系
-                title: '🦒 夜明けの朝日タイプ', hiddenCharm: 'おだやかな見守り力',
+                color: '#FFF9B3', darkColor: '#E1B12C', // 黄色系 (視認性のため濃く)
+                title: '🦒 夜明けの朝日タイプ', 
+                hiddenCharm: 'おだやかな見守り力',
                 desc: '一歩引いて全体を見る安心感の持ち主。\nみんなが気づかない小さな変化にも気づく\n賢さと優しさに支えられている人がいるよ。',
                 advice: 'あなたは、感情に流され過ぎず、少し\n高いところから全体を見守るような\n視点を持っている人。\nだからこそ、『自分の気持ち』を後回しに\nしがちな一面も。時々は、自分の本音を\n吐き出す時間を作ってみてね。\nジジみたいに、ストレス発散に、\nジェットコースターに乗るのもひとつの手だよ。',
-                traits: '俯瞰／冷静さ／見守り', img: 'gigi.png'
+                traits: '俯瞰／冷静さ／見守り', 
+                img: 'gigi.png'
             },
             levy: {
                 id: 'levy', nameEn: 'Levy', nameJp: 'レヴィ', 
                 color: '#E0B3FF', darkColor: '#9D65C9', // 紫系
-                title: '🦄 夜空の星タイプ', hiddenCharm: '静かなる癒やしの光',
+                title: '🦄 夜空の星タイプ', 
+                hiddenCharm: '静かなる癒やしの光',
                 desc: '暗闇でこそ輝く希望の星。\n落ち込んでいる時にあなたがかけてくれる\n優しい言葉は、迷っている人の\n道しるべになっているよ。',
                 advice: 'にぎやかな場よりも、少人数や落ち着いた\n時間のなかで、自分らしさが光るタイプ。\nじっくり考えたり、ひとりの世界にひたる時間も\n大切な栄養。\n『今日はどんないいことあったかな？』と、\n寝る前にひとつだけ思い出してみると、\nレヴィらしい穏やかな時間が育っていくよ。',
-                traits: 'ミステリアス／静かな情熱／直感', img: 'levy.png'
+                traits: 'ミステリアス／静かな情熱／直感', 
+                img: 'levy.png'
             }
         };
 
-        // 質問データ（改行位置を調整）
+        // 質問データ
         const ALL_QUESTIONS = [
             { id: 1, text: "大切な人が\n落ち込んでいたら？", options: [{ text: "そっと寄り添って、ゆっくり話を聞く", point: "espie" }, { text: "気分転換に誘って、一緒に楽しむ", point: "rosie" }, { text: "いいところを伝えて、励ます", point: "bonbon" }] },
             { id: 2, text: "大切な人が\n一等賞になったよ！", options: [{ text: "自分のことみたいに喜んじゃう！", point: "rosie" }, { text: "「よくがんばったね」って声をかける", point: "espie" }, { text: "次はどんな目標か楽しみになる", point: "levy" }] },
@@ -168,6 +182,29 @@
         ];
 
         // --- コンポーネント定義 ---
+
+        // 画像表示用コンポーネント (エラー時プレースホルダー)
+        const SmartImage = ({ src, alt, fallbackText, className }) => {
+            const [hasError, setHasError] = useState(false);
+
+            if (hasError) {
+                return (
+                    <div className={`${className} flex flex-col items-center justify-center text-center p-4`} style={{ backgroundColor: '#fff5f5', border: '2px dashed #ffb3ba', color: '#ffb3ba' }}>
+                        <span className="text-3xl mb-2">📷</span>
+                        <span className="font-bold text-sm">{fallbackText}</span>
+                    </div>
+                );
+            }
+
+            return (
+                <img 
+                    src={src} 
+                    alt={alt} 
+                    className={className} 
+                    onError={() => setHasError(true)} 
+                />
+            );
+        };
 
         const PictureBookWand = () => (
             <svg viewBox="0 0 200 200" className="w-64 h-64 wand-swing" style={{ overflow: 'visible' }}>
@@ -265,16 +302,6 @@
                 return newArray;
             };
 
-            const getImageUrl = (filename, name, color) => {
-                const hex = color.replace('#', '');
-                // プレースホルダー画像 (正方形)
-                // 本番環境ではローカル画像のパスに置き換わります (例: 'lillilu.png')
-                // GitHub Pagesなどで使用する場合は、以下の行のコメントアウトを外し、上のplacehold.coの行をコメントアウトしてください
-                // return filename; 
-                
-                return `https://placehold.co/400x400/${hex}/5d4037.png?text=${name}`;
-            };
-
             const initGame = () => {
                 const shuffled = shuffleArray(ALL_QUESTIONS);
                 setQuestions(shuffled.slice(0, 7));
@@ -351,14 +378,12 @@
                         
                         {/* 表紙画像エリア (正方形) */}
                         <div className="w-64 h-64 bg-white/50 rounded-3xl border-4 border-white shadow-lg mb-8 overflow-hidden flex items-center justify-center relative">
-                            {/* 画像を入れる場合は以下のコメントアウトを外してファイル名を指定 */}
-                            {/* <img src="cover.png" alt="表紙" className="w-full h-full object-cover" /> */}
-                            
-                            {/* ダミー画像 (画像設定時は削除) */}
-                            <div className="text-pink-300 font-bold text-xl opacity-50 flex flex-col items-center">
-                                <span>Image Area</span>
-                                <span className="text-sm">(cover.png)</span>
-                            </div>
+                            <SmartImage 
+                                src="cover.png" 
+                                alt="表紙" 
+                                fallbackText="Image Area (cover.png)"
+                                className="w-full h-full object-cover" 
+                            />
                         </div>
 
                         <button onClick={initGame} className="w-full max-w-xs bg-gradient-to-r from-pink-400 to-rose-400 text-white text-2xl font-bold py-5 rounded-full shadow-xl border-4 border-white btn-bounce relative overflow-hidden group">
@@ -384,7 +409,12 @@
                         <div className="flex-grow flex flex-col justify-center max-w-md mx-auto w-full">
                             {/* 画像挿入スペース (正方形) */}
                             <div className="w-full aspect-square bg-white/50 rounded-3xl mb-6 border-4 border-dashed border-pink-200 flex items-center justify-center relative overflow-hidden shadow-inner">
-                                <span className="text-pink-200 font-bold text-xl">Image Area</span>
+                                <SmartImage 
+                                    src={`q${q.id}.png`} 
+                                    alt={`q${q.id}.png`} 
+                                    fallbackText="Image Area"
+                                    className="w-full h-full object-cover" 
+                                />
                             </div>
                             <div className="glass-card p-6 mb-6 relative">
                                 <h2 className="text-2xl md:text-3xl font-bold text-center text-deep-brown leading-relaxed whitespace-pre-wrap">
@@ -423,7 +453,12 @@
                         <div className="flex justify-center mb-6">
                             <div className="p-3 bg-white rounded-[2.5rem] shadow-xl rotate-1">
                                 <div className="w-64 h-64 md:w-72 md:h-72 rounded-[2rem] overflow-hidden bg-gray-100 border-2 border-gray-100">
-                                    <img src={getImageUrl(resultChar.img, resultChar.nameEn, resultChar.color)} alt={resultChar.nameEn} className="w-full h-full object-cover" />
+                                    <SmartImage 
+                                        src={resultChar.img} 
+                                        alt={resultChar.nameEn} 
+                                        fallbackText={resultChar.nameEn}
+                                        className="w-full h-full object-cover" 
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -492,34 +527,37 @@
                         {/* 全タイプ図鑑 (一覧表示：自分のタイプを強調、一行表示、フォント小さめ) */}
                         <div className="mb-10 text-[0.8em]">
                             <div className="space-y-4">
-                                {Object.values(CHARACTERS).map((char) => (
-                                    <div 
-                                        key={char.id} 
-                                        className="rounded-2xl p-4 shadow-sm flex flex-col gap-1 bg-white/90 relative overflow-hidden transition-transform"
-                                        style={{ 
-                                            border: char.id === resultChar.id ? `4px solid ${char.color}` : '1px solid #eee',
-                                            transform: char.id === resultChar.id ? 'scale(1.02)' : 'scale(1)',
-                                            boxShadow: char.id === resultChar.id ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
-                                        }}
-                                    >
-                                        {char.id === resultChar.id && (
-                                            <div className="absolute top-0 left-0 bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-br-lg z-10">
-                                                YOUR TYPE
+                                {Object.values(CHARACTERS).map((char) => {
+                                    // 背景色は白(0.9)
+                                    return (
+                                        <div 
+                                            key={char.id} 
+                                            className="rounded-2xl p-4 shadow-sm flex flex-col gap-1 bg-white/90 relative overflow-hidden transition-transform"
+                                            style={{ 
+                                                border: char.id === resultChar.id ? `4px solid ${char.color}` : '1px solid #eee',
+                                                transform: char.id === resultChar.id ? 'scale(1.02)' : 'scale(1)',
+                                                boxShadow: char.id === resultChar.id ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
+                                            }}
+                                        >
+                                            {char.id === resultChar.id && (
+                                                <div className="absolute top-0 left-0 bg-yellow-400 text-white text-xs font-bold px-3 py-1 rounded-br-lg z-10">
+                                                    YOUR TYPE
+                                                </div>
+                                            )}
+                                            <div className="absolute top-0 right-0 w-20 h-20 opacity-20 rounded-bl-full" style={{backgroundColor: char.color}}></div>
+                                            
+                                            <div className="flex items-center gap-2 mb-1 relative z-0">
+                                                <span className="text-3xl">{char.title.split(' ')[0]}</span>
+                                                <div className="font-bold text-lg text-deep-brown flex-1">
+                                                    {char.nameEn} <span className="text-sm font-normal">({char.nameJp})</span>
+                                                </div>
                                             </div>
-                                        )}
-                                        <div className="absolute top-0 right-0 w-20 h-20 opacity-20 rounded-bl-full" style={{backgroundColor: char.color}}></div>
-                                        
-                                        <div className="flex items-center gap-2 mb-1 relative z-0">
-                                            <span className="text-3xl">{char.title.split(' ')[0]}</span>
-                                            <div className="font-bold text-lg text-deep-brown flex-1">
-                                                {char.nameEn} <span className="text-sm font-normal">({char.nameJp})</span>
+                                            <div className="font-bold pl-1 leading-relaxed text-gray-600">
+                                                {char.title.split(' ').slice(1)} <span style={{ color: char.darkColor }}>【隠れた魅力：{char.hiddenCharmAlt || char.hiddenCharm}】</span>
                                             </div>
                                         </div>
-                                        <div className="font-bold pl-1 leading-relaxed text-gray-600">
-                                            {char.title.split(' ').slice(1)} <span style={{ color: char.darkColor }}>【隠れた魅力：{char.hiddenCharm}】</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
 
